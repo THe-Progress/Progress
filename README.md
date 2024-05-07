@@ -1,16 +1,15 @@
-# progress
+# Progress Project
 
-A new Flutter project.
+Welcome to our group project, Progress. It's an Android app designed to combat procrastination using machine learning, customized notifications, and a reward system. Currently, we have completed the onboarding portion using flutter .
 
-## Getting Started
+## Onboarding
 
-This project is a starting point for a Flutter application.
+During onboarding, users can select from a variety of activities that will be used later in generating notification. This is implemented by the `ActivitySelection` class in [`main.dart`](progress/lib/main.dart).
 
-A few resources to get you started if this is your first Flutter project:
+## Key Components
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- `main.dart`: This file contains the `ActivitySelection` widget along with other basic onboarding pages. `ActivitySelection` allows users to select and deselect activities during onboarding.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- `mainapp.dart`: This is the main app widget. Currently it displays the selected activities in a list but it will be our main portion after the onboarding is done.
+
+As we progress, we'll be adding more features and functionalities to combat procrastination effectively.
