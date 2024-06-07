@@ -1,5 +1,6 @@
 import 'package:usage_stats/usage_stats.dart';
 import 'package:device_apps/device_apps.dart';
+import 'foreground_app_info.dart';
 
 class UsageStatsResult {
   final Map<String?, NetworkInfo?> netInfoMap;
@@ -15,6 +16,8 @@ class UsageStatsResult {
 
 Future<UsageStatsResult> fetchUsageStatsAndApps() async {
   // Set the date range
+  // String currentApp = await ForegroundAppInfo.getCurrentForegroundApp();
+  // print('Current foreground app: $currentApp');
   DateTime endDate = DateTime.now();
   DateTime startDate = endDate.subtract(const Duration(days: 1));
 
