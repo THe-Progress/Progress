@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'usage_stats_screen.dart';
 
 class MainApp extends StatelessWidget {
-  final Set<String> selectedActivities;
+  final Map<String, TimeOfDay> selectedActivities;
 
   const MainApp({required this.selectedActivities});
   @override

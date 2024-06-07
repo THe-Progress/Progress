@@ -1,4 +1,3 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'mainapp.dart';
@@ -34,52 +33,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   final List<Widget> _onboardingScreens = [
     // Welcome Screen
-    const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Welcome to Progress!',
-          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 16.0),
-        Text(
+    const OnboardingPage(
+      title: 'Welcome to Progress!',
+      description:
           'This app is designed to help you stay focused and achieve your goals.',
-          textAlign: TextAlign.center,
-        ),
-      ],
     ),
     // Benefits Highlights
-    const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Benefits Highlights',
-          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 16.0),
-        Text(
+    const OnboardingPage(
+      title: 'Benefits Highlights',
+      description:
           'Track your progress and stay motivated with personalized reminders and rewards.',
-          textAlign: TextAlign.center,
-        ),
-      ],
     ),
     // User Permissions
-    const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'User Permissions',
-          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 16.0),
-        Text(
+    const OnboardingPage(
+      title: 'User Permissions',
+      description:
           'Progress needs permission to send you notifications to keep you on track.',
-          textAlign: TextAlign.center,
-        ),
-      ],
     ),
   ];
-  Set<String> selectedActivities = {};
+  Map<String, TimeOfDay> selectedActivities = {};
 
   @override
   void initState() {
@@ -107,7 +79,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     const SizedBox(height: 16.0),
                     const Text(
-                      'Select your preferred activities',
+                      'Select your preferred activities and set time',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16.0),
@@ -163,6 +135,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
+class OnboardingPage extends StatelessWidget {
+  final String title;
+  final String description;
+
+  const OnboardingPage({required this.title, required this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16.0),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16.0),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 const List<String> availableActivities = [
   'Coding',
   'Exercise',
@@ -176,7 +177,7 @@ const List<String> availableActivities = [
 ];
 
 class ActivitySelection extends StatefulWidget {
-  final Set<String> selectedActivities;
+  final Map<String, TimeOfDay> selectedActivities;
 
   const ActivitySelection({super.key, required this.selectedActivities});
 
@@ -185,6 +186,20 @@ class ActivitySelection extends StatefulWidget {
 }
 
 class _ActivitySelectionState extends State<ActivitySelection> {
+  Future<void> _selectTime(String activity) async {
+    final TimeOfDay initialTime = TimeOfDay.now();
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    if (pickedTime != null) {
+      setState(() {
+        widget.selectedActivities[activity] = pickedTime;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -193,15 +208,15 @@ class _ActivitySelectionState extends State<ActivitySelection> {
       children: availableActivities.map((activity) {
         return FilterChip(
           label: Text(activity),
-          selected: widget.selectedActivities.contains(activity),
+          selected: widget.selectedActivities.containsKey(activity),
           onSelected: (isSelected) {
-            setState(() {
-              if (isSelected) {
-                widget.selectedActivities.add(activity);
-              } else {
+            if (isSelected) {
+              _selectTime(activity);
+            } else {
+              setState(() {
                 widget.selectedActivities.remove(activity);
-              }
-            });
+              });
+            }
           },
         );
       }).toList(),
