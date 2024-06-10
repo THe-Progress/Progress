@@ -74,6 +74,33 @@ func prompt(ch *amqp.Channel, resdata data) {
 }
 
 
+
+func SatricialResponse(ch *amqp.Channel) <-chan amqp.Delivery{
+   q, err := ch.QueueDeclare(
+        "response_queue", // Name of the queue for responses
+        false,            // Durable
+        false,            // Delete when unused
+        false,            // Exclusive
+        false,            // No-wait
+        nil,              // Arguments
+    )
+    failOnError(err, "Failed to declare a queue")
+
+    msgs, err := ch.Consume(
+        q.Name, // Queue name
+        "",     // Consumer name
+        true,   // Auto acknowledge
+        false,  // Exclusive
+        false,  // No local
+        false,  // No wait
+        nil,    // Args
+    )
+    failOnError(err, "Failed to register a consumer")
+
+    return msgs
+}
+
+
 //Handling the response sent as json prompt 
 
 func responserhandler(w http.ResponseWriter, r *http.Request){
@@ -108,6 +135,19 @@ func main() {
 
     // Start the HTTP server
     log.Fatal(http.ListenAndServe(":8080", r))
+
+    conn,ch:=ConnectToRabbitMQ()
+	defer conn.Close()
+	defer ch.Close()
+
+	responseMsgs := SatricialResponse(ch)
+
+    go func (){
+		for d := range responseMsgs {
+			log.Printf("Recieved response:%s",d.Body)
+			
+		}
+	}()
 
 	
 
